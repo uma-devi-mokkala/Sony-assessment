@@ -1,0 +1,13 @@
+logs_enabled: true
+log_collection:
+  config:
+    container_exclude:
+    - /.build
+    labels:
+      app: country-lookup
+    sources:
+      - /var/log/app.log
+      - /var/log/containers/*.log
+logs_forwarder:
+  host: datadog-agent.datadoghq.com
+  port: 10516

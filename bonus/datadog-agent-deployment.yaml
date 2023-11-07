@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: datadog-agent-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: datadog-agent
+  template:
+    metadata:
+      labels:
+        app: datadog-agent
+    spec:
+      containers:
+      - name: datadog-agent
+        image: datadoghq/datadog-agent
+        env:
+        - name: DD_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: datadog-secret
+              key: <api-key>
+        - name: DD_SITE
+          value: datadoghq.com
+        - name: <DD_APPLICATION_KEY>
+          valueFrom:
+            secretKeyRef:
+              name: datadog-secret
+              key: app-key
+        command: ["/opt/datadog-agent/datadog-agent", "-c", "/etc/datadog-agent/datadog.yaml"]
+        volumeMounts:
+        - name: datadog-agent-config
+          mountPath: /etc/datadog-agent
+      volumes:
+      - name: datadog-agent-config
+        configMap:
+          name: datadog-agent-config
